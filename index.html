@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>キラドレ♪音感チャレンジ</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <p class="brand">Torii Music Park</p>
+      <h1>キラドレ♪音感チャレンジ</h1>
+    </header>
+
+    <section class="start-panel" aria-label="チャレンジ開始">
+      <button id="startFullTestButton" class="start-button" type="button">チャレンジスタート！</button>
+    </section>
+
+    <section id="listenTester" class="tester is-active" aria-labelledby="listenTitle">
+      <div class="tester-head">
+        <div>
+          <p class="eyebrow">Stage 1</p>
+          <h2 id="listenTitle">ドレミあて</h2>
+        </div>
+      </div>
+
+      <div class="stage-guide hero-guide">
+        <span aria-hidden="true">♪</span>
+        <strong>今からなる音を<br>ドレミで答えてね！</strong>
+      </div>
+
+      <div id="solfegeButtons" class="solfege-grid" aria-label="ドレミ選択"></div>
+
+      <div class="result-row" aria-live="polite">
+        <span id="listenResult">スタートすると5問はじまります。</span>
+        <strong id="listenScore">0 / 5</strong>
+      </div>
+    </section>
+
+    <section id="voiceTester" class="tester" aria-labelledby="voiceTitle" hidden>
+      <div class="tester-head">
+        <div>
+          <p class="eyebrow">Stage 2</p>
+          <h2 id="voiceTitle">こえチャレ</h2>
+        </div>
+      </div>
+
+      <div class="stage-guide">
+        <span aria-hidden="true">★</span>
+        <strong>画面のドレミを、正しく歌ってね！</strong>
+      </div>
+
+      <div class="target-row">
+        <div class="target-note">
+          <span>この音をうたってね</span>
+          <strong id="targetNoteLabel">ド</strong>
+        </div>
+      </div>
+
+      <div class="voice-status" aria-live="polite">
+        <span id="voiceGate">発声OFF</span>
+        <strong id="voiceInstruction">ドレミあての後に自動で始まります。</strong>
+      </div>
+
+      <div class="tuner" aria-label="音程メーター">
+        <div class="meter-track">
+          <div class="meter-center"></div>
+          <div id="pitchNeedle" class="pitch-needle"></div>
+        </div>
+        <div class="meter-labels">
+          <span>低い</span>
+          <span>ぴったり</span>
+          <span>高い</span>
+        </div>
+      </div>
+
+      <canvas id="waveCanvas" width="640" height="140" aria-label="マイク入力の波形"></canvas>
+
+      <div class="voice-readout" aria-live="polite">
+        <div>
+          <span>きこえた声</span>
+          <strong id="detectedNote">--</strong>
+        </div>
+        <div>
+          <span>ずれ</span>
+          <strong id="centDiff">--</strong>
+        </div>
+        <div>
+          <span>スコア</span>
+          <strong id="voiceResult">待機中</strong>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitingPanel" class="waiting-panel" aria-live="polite" hidden>
+      <div class="waiting-sparkles" aria-hidden="true"></div>
+      <p class="eyebrow">Result Time</p>
+      <h2>判定中...</h2>
+      <p>キラキラ結果をじゅんびしています</p>
+    </section>
+
+    <section id="resultPanel" class="result-panel" aria-live="polite" hidden>
+      <div class="burst" aria-hidden="true"></div>
+      <p class="eyebrow">Kirakira Result</p>
+      <h2 id="finalTitle">キラキラ判定</h2>
+      <p id="finalMessage" class="final-message"></p>
+      <div class="result-level-scale" aria-label="5段階レベル">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+      </div>
+      <div class="score-board">
+        <div>
+          <span>ドレミあて</span>
+          <strong id="finalListenScore">0 / 5</strong>
+        </div>
+        <div>
+          <span>こえチャレ</span>
+          <strong id="finalVoiceScore">0 / 5</strong>
+        </div>
+        <div>
+          <span>総合</span>
+          <strong id="finalTotalScore">0 / 10</strong>
+        </div>
+        <div>
+          <span>レベル</span>
+          <strong id="finalLevel">レベル1</strong>
+        </div>
+      </div>
+      <p id="finalDetails" class="final-details"></p>
+      <button id="restartButton" class="start-button" type="button">もう一度チャレンジ！</button>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
