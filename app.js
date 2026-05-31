@@ -44,7 +44,9 @@
   const finalTotalScore = document.querySelector("#finalTotalScore");
   const finalLevel = document.querySelector("#finalLevel");
   const finalDetails = document.querySelector("#finalDetails");
+  const lineCta = document.querySelector("#lineCta");
   const resultLevelItems = Array.from(document.querySelectorAll(".result-level-scale span"));
+  const campaignParams = readCampaignParams();
 
   let audioContext;
   let micStream = null;
@@ -67,6 +69,29 @@
   let voiceFrequencySamples = [];
   let voiceCentsByQuestion = [];
   let ignoreMicUntil = 0;
+
+  function readCampaignParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      app_name: "kiradore_pitch_challenge",
+      page_location: window.location.href,
+      page_path: window.location.pathname,
+      utm_source: params.get("utm_source") || "",
+      utm_medium: params.get("utm_medium") || "",
+      utm_campaign: params.get("utm_campaign") || "",
+      utm_content: params.get("utm_content") || "",
+      route: params.get("route") || params.get("utm_source") || "direct"
+    };
+  }
+
+  function track(eventName, details = {}) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: eventName,
+      ...campaignParams,
+      ...details
+    });
+  }
 
   function getAudioContext() {
     if (!audioContext) {
@@ -192,6 +217,7 @@
       setMode("listen");
       activePhase = "listen";
       listenResult.textContent = "今からなる音を、ドレミで答えてね！";
+      track("kiradore_start");
       window.setTimeout(playNextListenNote, 450);
     } catch (error) {
       startFullTestButton.disabled = false;
@@ -269,6 +295,10 @@
     activePhase = "between";
     listenResult.textContent = `ドレミあては終了です。正解は${listenCorrect}問でした。続いてこえチャレに進みます。`;
     setSolfegeEnabled(false);
+    track("kiradore_listen_complete", {
+      listen_score: listenCorrect,
+      listen_total: LISTEN_COUNT
+    });
     window.setTimeout(startVoicePhase, 1300);
   }
 
@@ -358,6 +388,10 @@
     activePhase = "done";
     stopMic();
     voiceInstruction.textContent = "こえチャレ終了。結果を発表します。";
+    track("kiradore_voice_complete", {
+      voice_score: voiceCorrect,
+      voice_total: VOICE_COUNT
+    });
     showWaitingResult();
   }
 
@@ -388,6 +422,17 @@
     const passed = totalPoints >= OVERALL_PASS_POINTS;
     const voiceAverage = voiceCentsByQuestion.length ? Math.round(average(voiceCentsByQuestion.map(Math.abs))) : 0;
 
+    track("kiradore_result", {
+      listen_score: listenCorrect,
+      listen_total: LISTEN_COUNT,
+      voice_score: voiceCorrect,
+      voice_total: VOICE_COUNT,
+      total_score: totalPoints,
+      total_possible: LISTEN_COUNT + VOICE_COUNT,
+      level,
+      passed,
+      voice_average_cents: voiceAverage
+    });
     updateResultLevel(level);
     finalTitle.textContent = passed ? "キラドレ合格！" : "あと少しでキラドレ！";
     finalMessage.textContent = passed
@@ -510,7 +555,21 @@
   }
 
   startFullTestButton.addEventListener("click", startFullTest);
+  lineCta.addEventListener("click", () => {
+    const totalPoints = listenCorrect + voiceCorrect;
+    track("kiradore_line_click", {
+      destination: lineCta.href,
+      listen_score: listenCorrect,
+      voice_score: voiceCorrect,
+      total_score: totalPoints
+    });
+  });
   restartButton.addEventListener("click", () => {
+    track("kiradore_restart", {
+      listen_score: listenCorrect,
+      voice_score: voiceCorrect,
+      total_score: listenCorrect + voiceCorrect
+    });
     startFullTestButton.hidden = false;
     startFullTestButton.disabled = false;
     startFullTestButton.textContent = "チャレンジスタート！";

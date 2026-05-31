@@ -621,6 +621,26 @@ canvas {
   line-height: 1.15;
 }
 
+.line-cta {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 58px;
+  margin-top: 16px;
+  color: #fff;
+  background: linear-gradient(90deg, #06c755, var(--green));
+  border: 3px solid #fff;
+  border-radius: 8px;
+  box-shadow: 0 12px 24px rgba(6, 199, 85, 0.25);
+  font-size: 19px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.line-cta:active {
+  transform: translateY(1px);
+}
+
 @media (max-width: 560px) {
   .tester-head,
   .target-row {
