@@ -356,8 +356,22 @@
 
   function finishVoicePhase() {
     activePhase = "done";
+    stopMic();
     voiceInstruction.textContent = "こえチャレ終了。結果を発表します。";
     showWaitingResult();
+  }
+
+  function stopMic() {
+    if (animationFrame) {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = null;
+    }
+    if (micStream) {
+      micStream.getTracks().forEach((track) => track.stop());
+      micStream = null;
+      analyser = null;
+      micData = null;
+    }
   }
 
   function showWaitingResult() {
@@ -507,8 +521,7 @@
   });
 
   window.addEventListener("beforeunload", () => {
-    if (animationFrame) window.cancelAnimationFrame(animationFrame);
-    if (micStream) micStream.getTracks().forEach((track) => track.stop());
+    stopMic();
   });
 
   renderSolfegeButtons();
